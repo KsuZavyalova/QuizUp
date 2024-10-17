@@ -1,27 +1,59 @@
 <!-- templates/create_poll.html -->
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Создать опрос</title>
-</head>
-<body>
-    <h1>Создать новый опрос</h1>
+{% extends "base.html" %}
+
+{% block title %}Создать Опрос{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Создать Новый Опрос</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.question.label }}<br>
-            {{ form.question(size=50) }}
-        </p>
-        <p>
-            варианты:
-            <br>
+        <div class="form-group">
+            {{ form.question.label(class="form-control-label") }}
+            {{ form.question(class="form-control", placeholder="Введите вопрос...", required=True) }}
+        </div>
+        <div class="form-group">
+            <label>Варианты Ответов:</label>
             {% for option in form.options %}
-                {{ option(size=30) }}<br>
+                <div class="input-group mb-2">
+                    {{ option(class="form-control", placeholder="Введите вариант ответа...", required=True) }}
+                    {% if not loop.first %}
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger remove-option">&times;</button>
+                        </div>
+                    {% endif %}
+                </div>
             {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
+            <button type="button" class="btn btn-secondary" id="add-option">Добавить Вариант</button>
+        </div>
+        <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+        <a href="{{ url_for('root') }}" class="btn btn-secondary">Назад к Опросам</a>
     </form>
-    <a href="{{ url_for('root') }}">Назад к опросам</a>
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.getElementById('add-option').addEventListener('click', function() {
+            const optionsContainer = document.querySelector('.form-group:nth-of-type(2)');
+            const currentOptions = optionsContainer.querySelectorAll('.input-group').length;
+            if (currentOptions < 5) {
+                const newOption = document.createElement('div');
+                newOption.classList.add('input-group', 'mb-2');
+                newOption.innerHTML = `
+                    <input type="text" name="options-${currentOptions}" class="form-control" placeholder="Введите вариант ответа..." required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-danger remove-option">&times;</button>
+                    </div>
+                `;
+                optionsContainer.insertBefore(newOption, document.getElementById('add-option'));
+            } else {
+                alert('Максимум 5 вариантов ответов.');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-option')) {
+                e.target.closest('.input-group').remove();
+            }
+        });
+    </script>
+{% endblock %}
