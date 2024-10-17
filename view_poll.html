@@ -1,18 +1,20 @@
 <!-- templates/view_poll.html -->
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ poll.question }}</title>
-</head>
-<body>
-    <h1>{{ poll.question }}</h1>
+{% extends "base.html" %}
+
+{% block title %}{{ poll.question }}{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">{{ poll.question }}</h1>
     <form method="POST">
         {% for option in poll.options %}
-            <input type="radio" name="option" value="{{ option.id }}" required> {{ option.text }}<br>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="option" id="option{{ option.id }}" value="{{ option.id }}" required>
+                <label class="form-check-label" for="option{{ option.id }}">
+                    {{ option.text }}
+                </label>
+            </div>
         {% endfor %}
-        <input type="submit" value="Голосовать">
+        <button type="submit" class="btn btn-primary mt-3">Голосовать</button>
+        <a href="{{ url_for('root') }}" class="btn btn-secondary mt-3">Назад к Опросам</a>
     </form>
-    <a href="{{ url_for('root') }}">Назад к опросам</a>
-</body>
-</html>
+{% endblock %}
