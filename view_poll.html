@@ -1,0 +1,18 @@
+<!-- templates/view_poll.html -->
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ poll.question }}</title>
+</head>
+<body>
+    <h1>{{ poll.question }}</h1>
+    <form method="POST">
+        {% for option in poll.options %}
+            <input type="radio" name="option" value="{{ option.id }}" required> {{ option.text }}<br>
+        {% endfor %}
+        <input type="submit" value="Голосовать">
+    </form>
+    <a href="{{ url_for('root') }}">Назад к опросам</a>
+</body>
+</html>
